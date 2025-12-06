@@ -1,0 +1,24 @@
+<html xmlns:th="http://www.thymelaf.org">
+<head>
+    <title>CREATE PRODUCT</title>
+</head>
+<body>
+<h1>Create your product</h1>
+<form th:action="@{/v2/products/save}" th:object="${product}" method="post">
+    <div>
+        <label>Name</label>
+        <input type="text" th:field="*{name}">
+    </div>
+    <div>
+        <label>Price</label>
+        <input type="number" th:field="*{price}">
+    </div>
+    <div>
+        <label>color</label>
+        <input type="text" th:field="*{color}">
+    </div>
+    <button type="submit">create</button>
+
+</form>
+</body>
+</html>
