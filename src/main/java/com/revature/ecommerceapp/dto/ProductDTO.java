@@ -13,6 +13,6 @@ public class ProductDTO {
     private String name;
     private String color;
     private double price;
-    private long id;
+//    private long id;
 
 }

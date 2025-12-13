@@ -11,9 +11,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -66,10 +69,16 @@ public class ProductController {
     @Operation(summary = "get products")
 
     @GetMapping
-    public ResponseEntity<List<Products>> getAllProducts(@CookieValue("UserCookie") String cookie){
+    public ResponseEntity<List<Products>> getAllProducts(HttpSession session){
 //        System.out.println(name + " " + cookie);
         List<Products> products = service.getAllProducts();
+//        if(session.getAttribute("user") != null)
+//            System.out.println("USER::::" + session.getAttribute("user") );
+        User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println(user.getUsername());
         return ResponseEntity.status(HttpStatus.OK).body(products);
+
+        //Refresh token
     }
 
     @Operation(summary = "Updateproducts")

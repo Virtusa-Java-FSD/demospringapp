@@ -25,7 +25,10 @@ public class SecurityConfig {
         );//
 
         http.authorizeHttpRequests(req -> req
-                .requestMatchers("/auth/login", "/users/register","/v2/products/*").permitAll()
+                .requestMatchers("/auth/login", "/users/register", "/v2/products/**").permitAll()
+                .requestMatchers("/ws-chat/**").permitAll()
+                .requestMatchers("/v3/api-docs/**").permitAll()
+                .requestMatchers("/swagger-ui.html").permitAll()
                 .requestMatchers("/api/products").hasRole("USER")
                 .anyRequest().authenticated()
         );
