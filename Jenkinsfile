@@ -93,16 +93,18 @@ pipeline {
                     failOnError: false,
                     publishers: [
                         sshPublisherDesc(
-                            configName: 'ec2-server',  // Your server name
+                            configName: 'ec2-server',
                             verbose: true,
                             transfers: [
                                 sshTransfer(
                                     execCommand: """
-                                        pkill -f "java -jar ${JAR_NAME}" || true
+                                        export PATH=/usr/bin:\$PATH
+                                        pkill -f "${JAR_NAME}" || true
                                         sleep 5
-                                        nohup java -jar ${REMOTE_DIR}/${JAR_NAME} --spring.profiles.active=prod > app.log 2>&1 &
-                                        echo 'Application restarted on port ${APP_PORT}'
-                                        exit 0
+                                        cd ${REMOTE_DIR}
+                                        nohup /usr/bin/java -jar ${JAR_NAME} --spring.profiles.active=prod > app.log 2>&1 &
+                                        sleep 2
+                                        echo 'Application restart attempted'
                                     """.stripIndent()
                                 )
                             ]
