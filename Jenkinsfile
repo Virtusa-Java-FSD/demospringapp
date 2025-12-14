@@ -72,35 +72,30 @@ pipeline {
         // NEW: Deploy JAR to EC2
        stage('Deploy to EC2') {
            steps {
-               bat """
-                   scp -i "${KEY_FILE}" -o StrictHostKeyChecking=no ${LOCAL_JAR_PATH} ${EC2_USER}@${EC2_HOST}:${REMOTE_APP_DIR}/app.jar
-               """
-               echo "JAR deployed successfully as app.jar on EC2"
+               sshagent(credentials: ['ec2-deploy-key']) {
+                   bat """
+                       scp -o StrictHostKeyChecking=no target/${JAR_NAME} ${EC2_USER}@${EC2_HOST}:${REMOTE_APP_DIR}/app.jar
+                   """
+                   echo "JAR deployed successfully as app.jar on EC2"
+               }
            }
        }
 
-        // NEW: Restart Application on EC2
-        stage('Restart Application on EC2') {
-
-            steps {
-                sshagent(['ec2-ssh-credentials']) {  // Recommended: Use Jenkins credentials (see note below)
-                    bat """
-                        ssh -i "${KEY_FILE}" -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} "
-                            # Stop existing app if running
-                            pkill -f 'java -jar.*app.jar' || true
-
-                            # Wait a moment
-                            sleep 5
-
-                            # Start new app in background
-                            nohup java -jar ${REMOTE_APP_DIR}/app.jar --spring.profiles.active=prod > app.log 2>&1 &
-
-                            echo 'Application restarted successfully'
-                        "
-                    """
-                }
-            }
-        }
+       stage('Restart Application on EC2') {
+           steps {
+               sshagent(credentials: ['ec2-deploy-key']) {
+                   bat """
+                       ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} "
+                           pkill -f 'java -jar.*app.jar' || true
+                           sleep 5
+                           nohup java -jar ${REMOTE_APP_DIR}/app.jar --spring.profiles.active=prod > app.log 2>&1 &
+                           echo 'Application restarted'
+                       "
+                   """
+                   echo "Application restarted on port ${APP_PORT}"
+               }
+           }
+       }
     }
 
 
