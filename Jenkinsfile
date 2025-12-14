@@ -13,7 +13,7 @@ pipeline {
             KEY_FILE = 'C:/Users/ArulanandhaGuru/Downloads/project-key.pem'   // Full path on Jenkins server/agent
             REMOTE_APP_DIR = '/home/ec2-user'
             JAR_NAME = 'ecommerceapp-0.0.1-SNAPSHOT.jar'  // Or use find command below for dynamic name
-            APP_PORT = '8080' 
+            APP_PORT = '8080'
      }
 
     options {
@@ -70,9 +70,7 @@ pipeline {
 
         // NEW: Deploy JAR to EC2
         stage('Deploy to EC2') {
-            when {
-                branch 'main'  // Optional: Only deploy from main branch
-            }
+
             steps {
                 script {
                     // Find the built JAR dynamically (recommended)
@@ -90,9 +88,7 @@ pipeline {
 
         // NEW: Restart Application on EC2
         stage('Restart Application on EC2') {
-            when {
-                branch 'main'
-            }
+         
             steps {
                 sshagent(['ec2-ssh-credentials']) {  // Recommended: Use Jenkins credentials (see note below)
                     bat """
