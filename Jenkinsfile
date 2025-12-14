@@ -92,7 +92,7 @@ pipeline {
                 sshPublisher(
                     publishers: [
                         sshPublisherDesc(
-                            configName: 'my-ec2-server',
+                            configName: 'ec2-server',
                             verbose: true,
                             transfers: [
                                 sshTransfer(
