@@ -7,13 +7,13 @@ pipeline {
     }
 
     environment {
-          
+
             EC2_HOST = 'ec2-13-126-0-26.ap-south-1.compute.amazonaws.com'  // e.g., ec2-54-123-45-67.compute-1.amazonaws.com
             EC2_USER = 'ec2-user'                   // Default for Amazon Linux
             KEY_FILE = 'C:/Users/ArulanandhaGuru/Downloads/project-key.pem'   // Full path on Jenkins server/agent
             REMOTE_APP_DIR = '/home/ec2-user'
             JAR_NAME = 'ecommerceapp-0.0.1-SNAPSHOT.jar'  // Or use find command below for dynamic name
-            APP_PORT = '8080'  // Your Spring Boot app port
+            APP_PORT = '8080' 
      }
 
     options {
