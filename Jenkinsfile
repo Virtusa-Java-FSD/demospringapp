@@ -92,7 +92,7 @@ pipeline {
                 sshPublisher(
                     publishers: [
                         sshPublisherDesc(
-                            configName: 'ec2-server',
+                            configName: 'ec2-server',  // Your server name
                             verbose: true,
                             transfers: [
                                 sshTransfer(
@@ -101,7 +101,8 @@ pipeline {
                                         sleep 5
                                         nohup java -jar ${REMOTE_DIR}/${JAR_NAME} --spring.profiles.active=prod > app.log 2>&1 &
                                         echo 'Application restarted on port ${APP_PORT}'
-                                    """
+                                        exit 0
+                                    """.stripIndent()
                                 )
                             ]
                         )
