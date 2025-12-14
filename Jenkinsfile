@@ -90,6 +90,7 @@ pipeline {
         stage('Restart Application on EC2') {
             steps {
                 sshPublisher(
+                    failOnError: false,
                     publishers: [
                         sshPublisherDesc(
                             configName: 'ec2-server',  // Your server name
@@ -97,7 +98,7 @@ pipeline {
                             transfers: [
                                 sshTransfer(
                                     execCommand: """
-                                        pkill -f 'java -jar.*${JAR_NAME}' || true
+                                        pkill -f "java -jar ${JAR_NAME}" || true
                                         sleep 5
                                         nohup java -jar ${REMOTE_DIR}/${JAR_NAME} --spring.profiles.active=prod > app.log 2>&1 &
                                         echo 'Application restarted on port ${APP_PORT}'
