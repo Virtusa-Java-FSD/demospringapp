@@ -90,7 +90,6 @@ pipeline {
         stage('Restart Application on EC2') {
             steps {
                 sshPublisher(
-                    failOnError: false,
                     publishers: [
                         sshPublisherDesc(
                             configName: 'ec2-server',
@@ -98,13 +97,14 @@ pipeline {
                             transfers: [
                                 sshTransfer(
                                     execCommand: """
-                                        export PATH=/usr/bin:\$PATH
-                                        pkill -f "${JAR_NAME}" || true
-                                        sleep 5
-                                        cd ${REMOTE_DIR}
-                                        nohup /usr/bin/java -jar ${JAR_NAME} --spring.profiles.active=prod > app.log 2>&1 &
+                                        #!/bin/bash
+                                        pkill -f "ecommerceapp-0.0.1-SNAPSHOT.jar" || true
+                                        sleep 3
+                                        cd /home/ec2-user
+                                        nohup java -jar ecommerceapp-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod > app.log 2>&1 < /dev/null &
+                                        disown
                                         sleep 2
-                                        echo 'Application restart attempted'
+                                        exit 0
                                     """.stripIndent()
                                 )
                             ]
