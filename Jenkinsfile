@@ -69,7 +69,7 @@ pipeline {
                 sshPublisher(
                     publishers: [
                         sshPublisherDesc(
-                            configName: 'my-ec2-server',  // Must match the Name you set
+                            configName: 'ec2-server',  // Must match the Name you set
                             verbose: true,
                             transfers: [
                                 sshTransfer(
