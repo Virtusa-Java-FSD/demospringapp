@@ -97,6 +97,7 @@ pipeline {
                             transfers: [
                                 sshTransfer(
                                     execCommand: """
+                                        set -e
                                         pkill -f ecommerceapp-0.0.1-SNAPSHOT.jar || true
                                         sleep 3
                                         cd /home/ec2-user
@@ -104,6 +105,7 @@ pipeline {
                                           --spring.profiles.active=prod \
                                           > app.log 2>&1 &
                                         echo "Application started"
+                                        exit 0
                                     """
                                 )
                             ]
