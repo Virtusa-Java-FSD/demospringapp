@@ -6,12 +6,6 @@ pipeline {
         maven "Maven3"
     }
 
-    environment {
-            JAR_NAME = 'ecommerceapp-0.0.1-SNAPSHOT.jar'  // Exact name from target
-            REMOTE_DIR = '/home/ec2-user'
-            APP_PORT = '8080'
-    }
-
     options {
         skipStagesAfterUnstable()
     }
@@ -64,56 +58,6 @@ pipeline {
             }
         }
 
-        stage('Deploy to EC2') {
-            steps {
-                sshPublisher(
-                    publishers: [
-                        sshPublisherDesc(
-                            configName: 'ec2-server',  // Must match the Name you set
-                            verbose: true,
-                            transfers: [
-                                sshTransfer(
-                                    sourceFiles: "target/${JAR_NAME}",
-                                    removePrefix: "target/",
-                                    remoteDirectory: "${REMOTE_DIR}",
-                                    flatten: true,  // Overwrites app.jar directly
-                                    execCommand: ''  // No command here
-                                )
-                            ]
-                        )
-                    ]
-                )
-                echo "JAR deployed to EC2 as ${REMOTE_DIR}/${JAR_NAME}"
-            }
-        }
-
-        stage('Restart Application on EC2') {
-            steps {
-                sshPublisher(
-                    publishers: [
-                        sshPublisherDesc(
-                            configName: 'ec2-server',
-                            verbose: true,
-                            transfers: [
-                                sshTransfer(
-                                    execCommand: """
-                                        set -e
-                                        pkill -f ecommerceapp-0.0.1-SNAPSHOT.jar || true
-                                        sleep 3
-                                        cd /home/ec2-user
-                                        nohup java -jar ecommerceapp-0.0.1-SNAPSHOT.jar \
-                                          --spring.profiles.active=prod \
-                                          > app.log 2>&1 &
-                                        echo "Application started"
-                                        exit 0
-                                    """
-                                )
-                            ]
-                        )
-                    ]
-                )
-            }
-        }
 
     }
 
