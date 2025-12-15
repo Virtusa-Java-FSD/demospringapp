@@ -10,6 +10,12 @@ pipeline {
         skipStagesAfterUnstable()
     }
 
+    environment {
+        JAR_NAME = "ecommerceapp-0.0.1-SNAPSHOT.jar"
+        REMOTE_DIR = "/home/ec2-user"
+        APP_PORT = "8080"
+    }
+
     stages{
 
         stage('Checkout'){
@@ -57,7 +63,28 @@ pipeline {
                 }
             }
         }
+        stage("Deploy to EC2") {
+            steps {
+                sshPublisher(
+                    publishers:[
+                        sshPublisherDesc(
+                            configName: "ec2-server",
+                            verbose: true,
+                            transfers: [
+                                sshTransfer(
+                                    sourceFiles: "target/${JAR_NAME}",
+                                    removePrefix: "target/",
+                                    remoteDirectory: "${REMOTE_DIR}",
+                                    flatten: true,
+                                    execCommand: ''
 
+                                )
+                            ]
+                        )
+                    ]
+                )
+            }
+        }
 
     }
 
